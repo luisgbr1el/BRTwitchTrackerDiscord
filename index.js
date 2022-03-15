@@ -149,16 +149,10 @@ ${arr[19]}`
         .setFooter({ text: "BRTwitchTracker" })
         .setTimestamp();
 
-      //console.log(JSON.parse(res.data[i].name))
       interaction.reply({ embeds: [embed], ephemeral: false });
     });
   }
-  //else if (commandName === 'user') {
-  //  const username = options.getString('name');
-  //  interaction.reply({
-  //    content: username,
-  //  })
-  //}
+
   else if (commandName === "ranking") {
     const optionsToRanking = {
       method: "GET",

@@ -7,9 +7,6 @@ const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 const token = process.env["token"];
 const authorization = process.env["AuthorizationHeader"];
 const clientId = process.env["ClientIdHeader"];
-//const { REST } = require('@discordjs/rest');
-//const { Routes } = require('discord-api-types');
-
 const request = require("request");
 
 const client = new DiscordJS.Client({
@@ -338,7 +335,13 @@ ${arr[9]}`
       .addComponents(
         new MessageButton()
           .setURL("https://brtwitchtracker.vercel.app")
-          .setLabel("Visitar site")
+          .setLabel("Site")
+          .setStyle("LINK")
+      )
+      .addComponents(
+        new MessageButton()
+          .setURL("https://luisgbr1el.gitbook.io/brtwitchtracker/")
+          .setLabel("Guia")
           .setStyle("LINK")
       )
       .addComponents(

@@ -40,12 +40,10 @@ Resultado: <code>${activity.activities[0].type} ${
       activity.activities[0].name
     }</code><br><br>
 <b>.avatarURL()</b><br>
-
+<img width="100px" src="${client.user.avatarURL()}">
 </body>
 `)
   );
-
-  //<img width="100px" src="${client.user.avatarURL()}">
 
   app.listen(port, () =>
     console.log(`Example app listening at http://localhost:${port}`)

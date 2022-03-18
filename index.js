@@ -246,7 +246,7 @@ ${arr[9]}`
         } else if (res.data[0].broadcaster_type == "affiliate") {
           tipo = "Afiliado 🤝";
         } else {
-          tipo = "Usuário comum";
+          tipo = "Usuário comum 👤";
         }
         data = new Date(res.data[0].created_at);
 

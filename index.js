@@ -312,7 +312,7 @@ ${arr[9]}`
     const embed = new MessageEmbed()
       .setTitle("Guia de ajuda")
       .setDescription(
-        "O **BRTwitchTracker** é um bot que tem como objetivo listar informações e *charts* sobre a Twitch BR/PT.\n\nAbaixo estão listados todos os comandos disponíveis e como utilizá-los."
+        "O **BRTwitchTracker** é um bot que tem como objetivo listar informações e *charts* sobre a Twitch BR/PT. <:casimiro:952603592601247834>\n\nAbaixo estão listados todos os comandos disponíveis e como utilizá-los."
       )
       .addField(
         "`/ranking`",

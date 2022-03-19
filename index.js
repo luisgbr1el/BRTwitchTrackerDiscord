@@ -230,11 +230,19 @@ ${arr[9]}`
       const res = JSON.parse(response.body);
       const resTxt = JSON.stringify(res);
 
+      const streamersFoto = [
+        "https://i.ibb.co/QkTLGFR/casimiro.png",
+        "https://i.ibb.co/5WwH6p0/alanzoka.gif",
+        "https://i.ibb.co/hDS0zM2/gaules.png",
+        "https://i.ibb.co/k1HnH8D/belrodrigues.png"
+      ]
+      const sort = Math.floor(Math.random() * streamersFoto.length);
       //console.log(res.data[0]);
       if (resTxt.length < 13) {
         const embed = new MessageEmbed()
-          .setTitle("❌ Usuário não encontrado!")
+          .setTitle("❌ O usuário `" + username + "` não foi encontrado!")
           .setColor("#ff6961")
+          .setImage(streamersFoto[sort])
           .setFooter({ text: "BRTwitchTracker" })
           .setTimestamp();
 
@@ -312,7 +320,7 @@ ${arr[9]}`
     const embed = new MessageEmbed()
       .setTitle("Guia de ajuda")
       .setDescription(
-        "O **BRTwitchTracker** é um bot que tem como objetivo listar informações e *charts* sobre a Twitch BR/PT. <:casimiro:952603592601247834>\n\nAbaixo estão listados todos os comandos disponíveis e como utilizá-los."
+        "O **BRTwitchTracker** é um bot que tem como objetivo listar informações e *charts* sobre a Twitch BR/PT.\n\nAbaixo estão listados todos os comandos disponíveis e como utilizá-los."
       )
       .addField(
         "`/ranking`",

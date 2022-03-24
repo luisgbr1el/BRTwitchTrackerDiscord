@@ -2,8 +2,9 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
+// https://hoppscotch.io/pt-br/
 const DiscordJS = require("discord.js");
-const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageButton, MessageSelectMenu } = require("discord.js");
 const token = process.env["token"];
 const authorization = process.env["AuthorizationHeader"];
 const clientId = process.env["ClientIdHeader"];
@@ -47,14 +48,14 @@ Resultado: <code>${activity.activities[0].type} ${
   );
 
   // guild
-  //const guildId = "777005017474793472";
-  //const guild = client.guilds.cache.get(guildId);
-  let commands;
+  const guildId = "777005017474793472";
+  const guild = client.guilds.cache.get(guildId);
+  //let commands;
 
   //if (guild) {
-  //  commands = guild.commands;
+    commands = guild.commands;
   //} else {
-  commands = client.application?.commands;
+  //commands = client.application?.commands;
   //}
 
   commands?.create({
@@ -88,6 +89,19 @@ Resultado: <code>${activity.activities[0].type} ${
     ],
   });
 
+  commands?.create({
+    name: "emotes",
+    description: "「API」Ver os emotes de um canal da Twitch.",
+    options: [
+      {
+        name: "canal",
+        description: "O nome do usuário/canal.",
+        required: true,
+        type: DiscordJS.Constants.ApplicationCommandOptionTypes.STRING,
+      },
+    ],
+  });
+
   //global
 });
 
@@ -96,7 +110,9 @@ client.on("interactionCreate", async (interaction) => {
     return;
   }
 
-  const { commandName, options } = interaction;
+  const { commandName, options, customId } = interaction;
+
+
 
   if (commandName === "games") {
     const optionsTopGames = {
@@ -114,7 +130,7 @@ client.on("interactionCreate", async (interaction) => {
       const resTxt = JSON.stringify(res);
 
       const arr = [];
-      for (i = 0; i < 20; i++) {
+      for (i = 0; i < 10; i++) {
         arr.push(`**${i + 1}.** ${res.data[i].name}`);
       }
 
@@ -131,17 +147,7 @@ ${arr[5]}
 ${arr[6]}
 ${arr[7]}
 ${arr[8]}
-${arr[9]}
-${arr[10]}
-${arr[11]}
-${arr[12]}
-${arr[13]}
-${arr[14]}
-${arr[15]}
-${arr[16]}
-${arr[17]}
-${arr[18]}
-${arr[19]}`
+${arr[9]}`
         )
         .setFooter({ text: "BRTwitchTracker" })
         .setTimestamp();
@@ -360,6 +366,111 @@ ${arr[9]}`
       );
 
     interaction.reply({ embeds: [embed], ephemeral: false, components: [row] });
+  } else if (commandName === "emotes") {
+    const username = options.getString("canal");
+    const optionsToUser = {
+      method: "GET",
+      url: "https://api.twitch.tv/helix/users?login=" + username.toLowerCase(),
+      headers: {
+        Authorization: authorization,
+        "Client-Id": clientId,
+      },
+    };
+
+    request(optionsToUser, function (error, response) {
+      if (error) throw new Error(error);
+      const res = JSON.parse(response.body);
+      const resTxt = JSON.stringify(res);
+
+      
+      const streamersFoto = [
+        "https://i.ibb.co/QkTLGFR/casimiro.png",
+        "https://i.ibb.co/5WwH6p0/alanzoka.gif",
+        "https://i.ibb.co/hDS0zM2/gaules.png",
+        "https://i.ibb.co/k1HnH8D/belrodrigues.png"
+      ]
+      const sort = Math.floor(Math.random() * streamersFoto.length);
+      //console.log(res.data[0]);
+      if (resTxt.length < 13) {
+        const embed = new MessageEmbed()
+          .setTitle("❌ O usuário `" + username + "` não foi encontrado!")
+          .setColor("#ff6961")
+          .setImage(streamersFoto[sort])
+          .setFooter({ text: "BRTwitchTracker" })
+          .setTimestamp();
+
+        interaction.reply({ embeds: [embed], ephemeral: false });
+      } else {
+        const userId = res.data[0].id;
+      
+        const optionsToUser = {
+          method: "GET",
+          url: "https://api.twitch.tv/helix/chat/emotes?broadcaster_id=" + userId,
+          headers: {
+          Authorization: authorization,
+          "Client-Id": clientId,
+          },
+        };
+
+        request(optionsToUser, function (error, response) {
+          if (error) throw new Error(error);
+          const resEmotes = JSON.parse(response.body);
+          const resTxt = JSON.stringify(res);
+
+          const emotesQuantity = resEmotes.data.length - 1;
+          
+          const dados = resEmotes.data;
+
+          if (emotesQuantity < 1) {
+            const embed = new MessageEmbed()
+            .setTitle("❌ O usuário `" + username + "` não tem emotes personalizados!")
+            .setColor("#ff6961")
+            .setFooter({ text: "BRTwitchTracker" })
+            .setTimestamp();
+  
+            interaction.reply({ embeds: [embed], ephemeral: false });
+          } else {
+
+            const emotesRow = new MessageActionRow()
+            .addComponents(
+  				    new MessageButton()
+        				.setCustomId('nextPage')
+	              .setLabel('>')
+	              .setStyle('PRIMARY')
+  			    );
+            
+            allEmoteOptions = [];
+            if (emotesQuantity > 25) {
+              for(i = 0; i <= emotesQuantity; i++) {
+                allEmoteOptions.push(resEmotes.data[i].name)
+              }
+              const embed = new MessageEmbed()
+                .setTitle("Emotes do canal **" + username + "**")
+                .setColor("#9146ff")
+                .setDescription(`Esse canal possui **${emotesQuantity} **emotes`)
+                .addField("Emotes", allEmoteOptions.join("\n"))
+                .setFooter({ text: "BRTwitchTracker" })
+                .setTimestamp();
+                
+                interaction.reply({embeds: [embed], components: [emotesRow]})
+            } else {
+              for(i = 0; i <= emotesQuantity; i++) {
+                allEmoteOptions.push({
+                  label: resEmotes.data[i].name,
+                  value: resEmotes.data[i].name
+                })
+              }
+            }
+        
+//	          console.log(interaction.customId);
+
+//            if (options.label === 'juniodRindorisadas') {
+//		        interaction.reply({ content: 'Something was selected!', components: []     });
+//	          }
+          }
+        })
+      }
+    });
   }
 });
 
